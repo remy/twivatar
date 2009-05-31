@@ -12,5 +12,7 @@ RewriteCond %{REQUEST_FILENAME} -d [OR]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule .* - [L]
 
+RewriteRule ^(mini|bigger|normal|original)/(.*)[/|]$ index.php?size=$1&user=$2 [L]
+
 RewriteRule ^(.*)[/|]$ index.php?user=$1 [L]
 </IfModule>
