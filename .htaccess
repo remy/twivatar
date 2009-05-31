@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+Options +FollowSymLinks +ExecCGI
+RewriteEngine On
+RewriteBase /
+
+# no-www.org
+RewriteCond %{HTTP_HOST} ^www\.twivatar\.org$ [NC]
+RewriteRule ^(.*)$ http://twivatar.org/$1 [R=301,L]
+
+# if the file or directory does exist
+RewriteCond %{REQUEST_FILENAME} -d [OR]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule .* - [L]
+
+RewriteRule ^(.*)[/|]$ index.php?user=$1 [L]
+</IfModule>
