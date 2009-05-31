@@ -27,7 +27,24 @@ function head($image_url) {
     return $res;
 }
 
+function size_image($image_url, $size) {
+    if ($size == 'original') {
+        $image_url = preg_replace('/_normal\./', '.', $image_url);
+    } else if ($size != 'normal') {
+        $image_url = preg_replace('/_normal\./', '_' . $size . '.');
+    }
+    
+    return $image_url;
+}
+
+function redirect($image_url, $size, $db) {
+    $image_url = size_image($image_url, $size);
+    mysql_close($db);
+    header('location: ' . $image_url);
+}
+
 $user = strtolower(@$_GET['user']);
+$size = strtolower(isset($_GET['size']) && in_array(strtolower($_GET['size']), array('mini', 'bigger', 'normal', 'original')) ? $_GET['size'] : 'normal');
 
 if ($user) {
     // connect to DB
@@ -39,19 +56,16 @@ if ($user) {
     if (!$result || mysql_num_rows($result) == 0) {
         // grab and store - then redirect
         $image_url = grab_and_store($user, $db);
-        mysql_close($db);
-        header('location: ' . $image_url);
+        redirect($image_url, $size, $db);
     } else if (mysql_num_rows($result) > 0) {
         // test if URL is available - then redirect
         $row = mysql_fetch_row($result);
 
         if (head($row->url)) {
-            mysql_close($db);
-            header('location: ' . $row->url);
+            redirect($row->url, $size, $db);
         } else { // else grab and store - then redirect
             $image_url = grab_and_store($user, $db);
-            mysql_close($db);
-            header('location: ' . $image_url);
+            redirect($image_url, $size, $db);
         }
     }    
 }
@@ -75,8 +89,15 @@ section, header, footer {
     display: block;
 }
 
-header {
-    margin: 20px;
+
+#wrapper {
+    width: 600px;
+    margin: 0 auto;
+    background: #fff url(images/shade.jpg) repeat-x center bottom;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-top: 1px solid #fff;
+    padding-bottom: 76px;
 }
 
 h1 {
@@ -88,25 +109,12 @@ h2 {
     font-style: italic;
 }
 
-#wrapper {
-    width: 600px;
-    margin: 0 auto;
-    background: #fff url(images/gradient.gif) repeat-x bottom center;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    border-top: 1px solid #fff;
-}
-
+header,
 article > p,
 article > h3,
-article > code {
+article > code,
+footer a {
     margin: 20px;
-}
-
-footer {
-    height: 86px;
-    background: url(images/shade.jpg) repeat-x center bottom;
-    margin-top: 20px;
 }
 
 footer a {
@@ -131,6 +139,15 @@ footer a:hover:after {
 
         <h3>Usage</h3>
         <code>&lt;img src="http://twivatar.org/[<em>screen_name</em>]" /&gt;</code>
+        
+        <p>Alternatively you can specify the size image you want from:</p>
+        <ul>
+            <li>mini (24x24)</li>
+            <li>normal (48x48 - default)</li>
+            <li>bigger (73x73)</li>
+            <li>original</li>
+        </ul>
+        <code>&lt;img src="http://twivatar.org/[<em>size</em>]/[<em>screen_name</em>]" /&gt;</code>
 
         <h3>Behind the scenes</h3>
         <p>This is a simple one script app that stores the url of the avatar. When the avatar is requested for <em>x</em> user, it runs the following logic:</p>
@@ -140,7 +157,7 @@ footer a:hover:after {
             <li>If a record is found, perform a <a href="http://en.wikipedia.org/wiki/HTTP%23Request_methods" title="Wikipedia Entry: HTTP#Request methods">HEAD</a> request to test the avatar url</li>
             <li>Finally use a <code>location</code> redirect to the avatar url</li>
         </ol>
-        <p>I'll be releasing the source code on GitHub shortly.</p>
+        <p>All the code is available on <a href="http://github.com/remy/twivatar/">GitHub</a>, so feel free to fork and contribute.</p>
         <h3>Todo</h3>
         <p>I'd like to upgrade the entire app to read the ETags from S3 (or some kind of cache control), and send them back to the client, so that the browser uses it's local cache if the avatar is available and up to date.</p>
     </article>
