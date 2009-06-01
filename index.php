@@ -24,7 +24,11 @@ function head($image_url) {
 
     $res = curl_exec( $c );
     
-    return $res;
+    if (preg_match('@HTTP/1.1 404 Not Found@', $res)) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 function size_image($image_url, $size) {
