@@ -31,7 +31,7 @@ function size_image($image_url, $size) {
     if ($size == 'original') {
         $image_url = preg_replace('/_normal\./', '.', $image_url);
     } else if ($size != 'normal') {
-        $image_url = preg_replace('/_normal\./', '_' . $size . '.');
+        $image_url = preg_replace('/_normal\./', '_' . $size . '.', $image_url);
     }
     
     return $image_url;
@@ -59,7 +59,7 @@ if ($user) {
         redirect($image_url, $size, $db);
     } else if (mysql_num_rows($result) > 0) {
         // test if URL is available - then redirect
-        $row = mysql_fetch_row($result);
+        $row = mysql_fetch_object($result);
 
         if (head($row->url)) {
             redirect($row->url, $size, $db);
