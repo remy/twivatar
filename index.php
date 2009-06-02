@@ -1,6 +1,11 @@
 <?php
 function grab_and_store($user, $db) {
-    $user_profile = json_decode(file_get_contents('http://twitter.com/users/' . $user . '.json'));
+    include('twitter_auth.php');
+    if (!@$twitter_auth) {
+        $twitter_auth = '';
+    }
+
+    $user_profile = json_decode(file_get_contents('http://' . $twitter_auth . 'twitter.com/users/' . $user . '.json'));
     
     if (!$user_profile) {
         return "http://static.twitter.com/images/default_profile_bigger.png";
