@@ -160,7 +160,7 @@ footer a:hover:after {
             <li>bigger (73x73)</li>
             <li>original</li>
         </ul>
-        <code>&lt;img src="http://twivatar.org/[<em>size</em>]/[<em>screen_name</em>]" /&gt;</code>
+        <code>&lt;img src="http://twivatar.org/[<em>screen_name</em>]/[<em>size</em>]" /&gt;</code>
 
         <h3>Behind the scenes</h3>
         <p>This is a simple one script app that stores the url of the avatar. When the avatar is requested for <em>x</em> user, it runs the following logic:</p>
