@@ -13,4 +13,4 @@ Alternatively you can specify the size image you want from:
 * bigger (73x73)
 * original
 
-<img src="http://twivatar.org/[screen_name]/[size]" />
+`<img src="http://twivatar.org/[screen_name]/[size]" />`
