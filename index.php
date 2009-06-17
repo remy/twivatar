@@ -69,8 +69,9 @@ if ($user) {
     } else if (mysql_num_rows($result) > 0) {
         // test if URL is available - then redirect
         $row = mysql_fetch_object($result);
-
-        if (head($row->url)) {
+        
+        // if the url returned is one of Twitter's O_o static ones, then do a grab
+        if (!preg_match('/static\.twitter\.com', $row->url) && head($row->url)) {
             redirect($row->url, $size, $db);
         } else { // else grab and store - then redirect
             $image_url = grab_and_store($user, $db);
