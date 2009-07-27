@@ -12,8 +12,10 @@ function grab_and_store($user, $db) {
     } else {
         $image_url = $user_profile->profile_image_url;
         
-        $sql = sprintf('replace into twitter_avatar (user, url) values ("%s", "%s")', mysql_real_escape_string($user), $image_url);
-        mysql_query($sql, $db);
+        if ($db) {
+            $sql = sprintf('replace into twitter_avatar (user, url) values ("%s", "%s")', mysql_real_escape_string($user), $image_url);
+            mysql_query($sql, $db);            
+        }
         
         return $image_url;
     }
@@ -48,19 +50,27 @@ function size_image($image_url, $size) {
 
 function redirect($image_url, $size, $db) {
     $image_url = size_image($image_url, $size);
-    mysql_close($db);
+    if ($db) {
+        mysql_close($db);        
+    }
     header('location: ' . $image_url);
 }
 
 $user = strtolower(@$_GET['user']);
 $size = strtolower(isset($_GET['size']) && in_array(strtolower($_GET['size']), array('mini', 'bigger', 'normal', 'original')) ? $_GET['size'] : 'normal');
+$db = null;
+$results = null;
+// skipping DB to save some performance from my own box, if you host this yourself, set to true
+$use_db = false; 
 
 if ($user) {
-    // connect to DB
-    $db = mysql_connect('localhost', 'root');
-    mysql_select_db('twivatar', $db);
+    if ($use_db) {
+        // connect to DB
+        $db = mysql_connect('localhost', 'root');
+        mysql_select_db('twivatar', $db);
 
-    $result = mysql_query(sprintf('select url from twitter_avatar where user="%s"', mysql_real_escape_string($user)), $db);
+        $result = mysql_query(sprintf('select url from twitter_avatar where user="%s"', mysql_real_escape_string($user)), $db);        
+    }
 
     if (!$result || mysql_num_rows($result) == 0) {
         // grab and store - then redirect
@@ -82,9 +92,9 @@ if ($user) {
 
 ?>
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta charset=utf-8 />
 <title>Twivatar - Twitter Avatar API</title>
 <style>
 body { 
@@ -137,10 +147,9 @@ footer a:hover:after {
 }
 
 </style>
-<script>
-// For discussion and comments, see: http://remysharp.com/2009/01/07/html5-enabling-script/
-(function(){if(!/*@cc_on!@*/0)return;var e = "abbr,article,aside,audio,bb,canvas,datagrid,datalist,details,dialog,eventsource,figure,footer,header,mark,menu,meter,nav,output,progress,section,time,video".split(','),i=e.length;while (i--){document.createElement(e[i])}})()
-</script>
+<!--[if IE]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
 </head>
 <body>
 <section id="wrapper">
@@ -177,11 +186,11 @@ footer a:hover:after {
     </article>
     <footer><a href="http://twitter.com/rem">@rem built this</a></footer>
 </section>
-<script type="text/javascript">
+<script>
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script>
-<script type="text/javascript">
+<script>
 try {
 var pageTracker = _gat._getTracker("UA-1656750-17");
 pageTracker._trackPageview();
