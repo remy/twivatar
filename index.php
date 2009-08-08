@@ -1,11 +1,28 @@
 <?php
+function grab_url($url) {
+    $c = curl_init();
+    curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt( $c, CURLOPT_URL, $url );
+  
+    // 500ms timeout - should be quick enough, tests show around 300ms-450ms
+    curl_setopt( $c, CURLOPT_CONNECTTIMEOUT_MS, 500 ); 
+
+    // 1 second timeout for the entire transaction
+    curl_setopt( $c, CURLOPT_TIMEOUT, 1 );
+  
+
+    $res = curl_exec( $c );
+  
+    return $res ? $res : '';
+}
+
 function grab_and_store($user, $db) {
     include('twitter_auth.php');
     if (!@$twitter_auth) {
         $twitter_auth = '';
     }
 
-    $user_profile = json_decode(file_get_contents('http://' . $twitter_auth . 'twitter.com/users/' . $user . '.json'));
+    $user_profile = json_decode(grab_url('http://' . $twitter_auth . 'twitter.com/users/' . $user . '.json'));
     
     if (!$user_profile) {
         return "http://static.twitter.com/images/default_profile_bigger.png";
@@ -14,7 +31,7 @@ function grab_and_store($user, $db) {
         
         if ($db) {
             $sql = sprintf('replace into twitter_avatar (user, url) values ("%s", "%s")', mysql_real_escape_string($user), $image_url);
-            mysql_query($sql, $db);            
+            mysql_query($sql, $db);          
         }
         
         return $image_url;
@@ -23,6 +40,8 @@ function grab_and_store($user, $db) {
 
 function head($image_url) {
     $c = curl_init();
+    
+    // TODO should we include a connection & read timeout here too?
     curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
     curl_setopt( $c, CURLOPT_CUSTOMREQUEST, 'HEAD' );
     curl_setopt( $c, CURLOPT_HEADER, 1 );
@@ -51,7 +70,7 @@ function size_image($image_url, $size) {
 function redirect($image_url, $size, $db) {
     $image_url = size_image($image_url, $size);
     if ($db) {
-        mysql_close($db);        
+        mysql_close($db);
     }
     header('location: ' . $image_url);
 }
@@ -59,17 +78,22 @@ function redirect($image_url, $size, $db) {
 $user = strtolower(@$_GET['user']);
 $size = strtolower(isset($_GET['size']) && in_array(strtolower($_GET['size']), array('mini', 'bigger', 'normal', 'original')) ? $_GET['size'] : 'normal');
 $db = null;
-$results = null;
+$result = null;
 // skipping DB to save some performance from my own box, if you host this yourself, set to true
-$use_db = false; 
+$use_db = false;
 
 if ($user) {
-    if ($use_db) {
-        // connect to DB
-        $db = mysql_connect('localhost', 'root');
-        mysql_select_db('twivatar', $db);
+    // use in case of emergencies: skips twitter entirly
+    if (false) {
+        redirect("http://static.twitter.com/images/default_profile_bigger.png", $size, false);
+        exit;
+    }
 
-        $result = mysql_query(sprintf('select url from twitter_avatar where user="%s"', mysql_real_escape_string($user)), $db);        
+    // connect to DB
+    if ($use_db) {
+        $db = mysql_connect('localhost', 'root');      
+        mysql_select_db('twivatar', $db);
+        $result = mysql_query(sprintf('select url from twitter_avatar where user="%s"', mysql_real_escape_string($user)), $db);
     }
 
     if (!$result || mysql_num_rows($result) == 0) {
@@ -81,18 +105,20 @@ if ($user) {
         $row = mysql_fetch_object($result);
         
         // if the url returned is one of Twitter's O_o static ones, then do a grab
-        if (!preg_match('/static\.twitter\.com', $row->url) && head($row->url)) {
+        if (!preg_match('/static\.twitter\.com/', $row->url) && head($row->url)) {
             redirect($row->url, $size, $db);
         } else { // else grab and store - then redirect
             $image_url = grab_and_store($user, $db);
             redirect($image_url, $size, $db);
         }
-    }    
+    }
+    
+    exit;
 }
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset=utf-8 />
 <title>Twivatar - Twitter Avatar API</title>
