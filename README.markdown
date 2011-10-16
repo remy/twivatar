@@ -14,3 +14,7 @@ Alternatively you can specify the size image you want from:
 * original
 
 `<img src="http://twivatar.org/[screen_name]/[size]" />`
+
+## License
+
+MIT: http://rem.mit-license.org
