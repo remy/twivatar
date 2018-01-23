@@ -4,7 +4,7 @@ Twivatar is a RESTful API to a Twitter user's avatar built out of frustration of
 
 ## Usage
 
-`<img src="https://twivatar.glitch.com/[screen_name]" />`
+`<img src="https://twivatar.glitch.me/[screen_name]" />`
 
 Alternatively you can specify the size image you want from:
 
@@ -13,7 +13,7 @@ Alternatively you can specify the size image you want from:
 * bigger (73x73)
 * original
 
-`<img src="https://twivatar.glitch.com/[screen_name]/[size]" />`
+`<img src="https://twivatar.glitch.me/[screen_name]/[size]" />`
 
 ## Behind the scenes
 
