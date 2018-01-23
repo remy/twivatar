@@ -20,9 +20,9 @@ Alternatively you can specify the size image you want from:
 This is a simple one script app that stores the url of the avatar. When the avatar is requested for x user, it runs the following logic:
 
 1. Get the mobile HTML from twitter
-* Run the HTML through cheerio and find the .Avatar element
-* Request the image URL and pipe to the response
-* All requests also include CORS headers so you can manipulate in a canvas
+2. Run the HTML through cheerio and find the .Avatar element
+3. Request the image URL and pipe to the response
+4. All requests also include CORS headers so you can manipulate in a canvas
 
 ## License
 
