@@ -4,7 +4,7 @@ Twivatar is a RESTful API to a Twitter user's avatar built out of frustration of
 
 ## Usage
 
-`<img src="http://twivatar.org/[screen_name]" />`
+`<img src="https://twivatar.glitch.com/[screen_name]" />`
 
 Alternatively you can specify the size image you want from:
 
@@ -13,8 +13,17 @@ Alternatively you can specify the size image you want from:
 * bigger (73x73)
 * original
 
-`<img src="http://twivatar.org/[screen_name]/[size]" />`
+`<img src="https://twivatar.glitch.com/[screen_name]/[size]" />`
+
+## Behind the scenes
+
+This is a simple one script app that stores the url of the avatar. When the avatar is requested for x user, it runs the following logic:
+
+1. Get the mobile HTML from twitter
+* Run the HTML through cheerio and find the .Avatar element
+* Request the image URL and pipe to the response
+* All requests also include CORS headers so you can manipulate in a canvas
 
 ## License
 
-MIT: http://rem.mit-license.org
+MIT: [http://rem.mit-license.org](http://rem.mit-license.org)

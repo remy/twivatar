@@ -1,0 +1,27 @@
+{
+  "name": "twivatar",
+  "version": "2.0.0",
+  "description": "Offers a single URL to a twitter avatar",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "cheerio": "^0.22.0",
+    "request": "^2.83.0",
+    "cors": "^2.8.4"
+  },
+  "engines": {
+    "node": "8.x"
+  },
+  "repository": {
+    "url": ""
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}

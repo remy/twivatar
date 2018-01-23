@@ -1,3 +1,0 @@
-<?php
-$twitter_auth = '';
-?>
