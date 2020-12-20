@@ -1,3 +1,8 @@
+# No longer works
+
+**Twitter has managed to finally kill this (and related) projects. Sorry, I've looked and I can't see a solution.**
+
+
 # Twivatar
 
 Twivatar is a RESTful API to a Twitter user's avatar built out of frustration of external Twitter apps breaking when the avatar url is stored, and then changed by that user later on Twitter - the result is a broken image on that app unless they constantly check for profile changes.
