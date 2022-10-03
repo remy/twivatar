@@ -1,6 +1,7 @@
-// server.js
-const cheerio = require('cheerio');
-const fetch = require('node-fetch');
+import cheerio from 'cheerio';
+import fetch from 'node-fetch';
+
+const junk = ['favicon.ico'];
 
 const get = async (username, size) => {
   const timestamp = new Date().toJSON().replace(/\D/g, '');
@@ -20,28 +21,35 @@ const get = async (username, size) => {
   );
 };
 
-exports.handler = async function (event, context, callback) {
+export const handler = async function (event, context, callback) {
   const { httpMethod } = event;
 
   if (httpMethod === 'OPTIONS') {
-    return callback(null, {
+    return {
       statusCode: 204,
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
-    });
+    };
   }
 
   const { username, size = 'normal' } = event.queryStringParameters;
+
+  if (junk.includes(username)) {
+    return {
+      statusCode: 204,
+    };
+  }
+
   let url = await get(username, size);
   if (size === 'original') {
     url = url.replace('_original.', '.');
   }
 
-  callback(null, {
+  return {
     statusCode: 302,
     headers: {
       location: url,
     },
-  });
+  };
 };
