@@ -1,6 +1,2 @@
-/:username /.netlify/edge-functions/get?username=:username 200
-/:username/:size /.netlify/edge-functions/get?username=:username&size=:size 200
-
-
 /:username /get?username=:username 200
 /:username/:size /get?username=:username&size=:size 200
