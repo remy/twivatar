@@ -40,7 +40,8 @@ export default async (req, context) => {
     location = location.replace('_original.', '.');
   }
 
-  return new Response(302, {
+  return new Response(null, {
+    status: 302,
     headers: {
       location,
     },
