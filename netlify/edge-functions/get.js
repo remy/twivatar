@@ -1,6 +1,3 @@
-import cheerio from 'cheerio';
-import fetch from 'node-fetch';
-
 const junk = ['favicon.ico'];
 
 const get = async (username, size) => {
@@ -16,10 +13,10 @@ const get = async (username, size) => {
     return null;
   }
 
-  const url = m[1];
+  const match = m[1];
   return (
     'https' +
-    url
+    match
       .replace(/_(?:(?:\d+)x(?:\d+))\.(jpeg|jpg|gif|png)/, '_' + size + '.$1')
       .split('https')
       .pop()
