@@ -1,2 +1,2 @@
-/:username /.netlify/functions/get?username=:username 200
-/:username/:size /.netlify/functions/get?username=:username&size=:size 200
+/:username /functions/get?username=:username 200
+/:username/:size /functions/get?username=:username&size=:size 200
